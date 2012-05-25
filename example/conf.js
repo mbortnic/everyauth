@@ -116,4 +116,8 @@ module.exports = {
       consumerKey: 'Enter your consumer key here'
     , consumerSecret: 'Enter your consumer secret here'
   }
+  , liveconnect: {
+      clientId: 'Enter your client/app id here'
+    , clientSecret: 'Enter your client/app secret here'
+  }
 };

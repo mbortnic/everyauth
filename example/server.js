@@ -51,6 +51,7 @@ var usersBySoundCloudId = {};
 var usersByMailchimpId = {};
 var usersMailruId = {};
 var usersByMendeleyId = {};
+var usersByLiveConnectId = {};
 var usersByLogin = {
   'brian@example.com': addUser({ login: 'brian@example.com', password: 'password'})
 };
@@ -410,6 +411,22 @@ everyauth
         (usersByMailchimpId[mailchimpUser.user_id] = addUser('mailchimp', mailchimpUser));
     })
     .redirectPath("/");
+    
+everyauth
+.liveconnect
+  .appId(conf.liveconnect.clientId)
+  .appSecret(conf.liveconnect.clientSecret)
+  
+  // Make sure hostname matches with app config at https://manage.dev.live.com/Applications/Index
+  .myHostname(process.env.HOSTNAME || "http://127.0.0.1:3000")//MC requires 127.0.0.1 for dev
+
+  // Reference scope at http://msdn.microsoft.com/en-us/library/live/hh243646.aspx
+  .scope('wl.basic wl.offline_access wl.signin wl.photos wl.share wl.skydrive_update ')
+  .findOrCreateUser( function (session, accessToken, accessTokenExtra, lcUserMetadata) {
+      return usersByLiveConnectId[lcUserMetadata.id] ||
+        (usersByLiveConnectId[lcUserMetadata.user_id] = addUser('liveconnect', lcUserMetadata));
+  })
+  .redirectPath('/');
 
 var app = express.createServer(
     express.bodyParser()
